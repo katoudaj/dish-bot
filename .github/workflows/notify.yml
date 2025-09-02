@@ -1,0 +1,29 @@
+name: Send LINE Menu
+
+on:
+  schedule:
+    - cron: "0 9 * * *"   # 毎日 9:00 (UTC) に実行 → 日本時間18:00
+  workflow_dispatch:       # 手動実行もできるようにする
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install python-dotenv line-bot-sdk
+
+      - name: Run script
+        env:
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+        run: |
+          python main.py
