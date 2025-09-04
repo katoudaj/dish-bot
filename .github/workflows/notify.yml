@@ -2,11 +2,14 @@ name: Send LINE Menu
 
 on:
   schedule:
-    - cron: "0 3 * * *"   # 毎日 3:00 (UTC) に実行 → 日本時間12:00
+    - cron: "0 3 * * *"   # 毎日 3:00 (UTC) → 日本時間 12:00
   workflow_dispatch:
     inputs:
       message:
         description: 'LINEからのメッセージ'
+        required: false
+      user_id:
+        description: '送信者のLINE userId'
         required: false
 
 jobs:
@@ -33,5 +36,6 @@ jobs:
           RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        run: |
-          python main.py
+          MESSAGE: ${{ github.event.inputs.message || '' }}
+          USER_ID: ${{ github.event.inputs.user_id || '' }}
+        run: python main.py

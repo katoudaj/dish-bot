@@ -23,7 +23,7 @@ def fetch_and_store_recipes():
     params = {"applicationId": RAKUTEN_APP_ID, "categoryId": "38"} # 38は今日の献立のカテゴリID
     res = requests.get(url, params=params).json()
 
-    for r in res["result"]:
+    for r in res.get("result", []):
         recipe_url = r["recipeUrl"]
         # 既存チェック
         existing = supabase.table("recipes").select("id").eq("url", recipe_url).execute().data
@@ -33,14 +33,27 @@ def fetch_and_store_recipes():
                 "url": recipe_url,
             }).execute()
 
-def send_random_recipe():
+def send_random_recipe(user_id: str = None):
     recipes = supabase.table("recipes").select("title,url").execute().data
     if not recipes:
         return
     recipe = random.choice(recipes)
     msg = f"今日のおすすめ: {recipe['title']}\n{recipe['url']}"
-    line_bot_api.broadcast(TextSendMessage(text=msg))
+
+    if user_id:
+        # 指定ユーザーにだけ送信
+        line_bot_api.push_message(user_id, TextSendMessage(text=msg))
+    else:
+        # user_idが指定されていなければ全員に broadcast
+        line_bot_api.broadcast(TextSendMessage(text=msg))
 
 if __name__ == "__main__":
+    import sys
+
     fetch_and_store_recipes()
-    send_random_recipe()
+
+    # workflow_dispatch の inputs から user_id を受け取れる想定
+    # GitHub Actions では environment variable で渡す例:
+    #   USER_ID を設定して workflow_dispatch で起動
+    user_id = os.getenv("USER_ID")  # 例: workflow_dispatch inputs -> env
+    send_random_recipe(user_id)
