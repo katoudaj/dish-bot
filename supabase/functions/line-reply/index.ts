@@ -11,23 +11,34 @@ serve(async (req) => {
   if (!event || event.type !== "message") return new Response("ok");
 
   const userMessage = event.message.text;
+  const userId = event.source.userId;
+
   console.log("LINEからの受信:", userMessage);
+  console.log("送信者のuserId:", userId);
 
   // GitHub Actions workflow_dispatch を呼ぶ
-  await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${GITHUB_TOKEN}`,
-      "Accept": "application/vnd.github.v3+json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      ref: "master",
-      inputs: {
-        message: userMessage // workflow に渡す場合
-      }
-    })
-  });
+  const response = await fetch(
+    `https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`,
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${GITHUB_TOKEN}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ref: "master",
+        inputs: {
+          message: userMessage,
+          user_id: userId
+        },
+      }),
+    }
+  );
+
+  // レスポンス確認用
+  const text = await response.text();
+  console.log("GitHub API response:", text);
 
   return new Response("ok");
 });
