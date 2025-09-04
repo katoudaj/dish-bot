@@ -11,6 +11,14 @@ venv/
 ENV/
 *.sqlite3
 
+# Supabase ローカルファイル
+supabase/.temp/
+supabase/.local/
+supabase/.cache/
+
+# Node.js dependencies
+node_modules/
+
 # VSCode
 .vscode/
 
