@@ -1,0 +1,1 @@
+EXEC_MODE = "production"  # Options: "development", "production"
