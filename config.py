@@ -1,1 +1,1 @@
-EXEC_MODE = "production"  # Options: "development", "production"
+EXEC_MODE = "production"  # Options: "debug", "production"

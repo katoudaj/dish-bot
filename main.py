@@ -7,7 +7,7 @@ from linebot import LineBotApi
 from linebot.models import TextSendMessage
 
 from config import EXEC_MODE
-if EXEC_MODE == "development":
+if EXEC_MODE == "debug":
     from recipe_provider_dummy import DummyRecipeProvider as RecipeProvider
 else:
     from recipe_provider import RecipeProvider
