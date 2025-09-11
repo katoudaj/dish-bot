@@ -7,11 +7,16 @@ from linebot import LineBotApi
 from linebot.models import TextSendMessage
 
 from config import EXEC_MODE
-
 if EXEC_MODE == "development":
     from recipe_provider_dummy import DummyRecipeProvider as RecipeProvider
 else:
     from recipe_provider import RecipeProvider
+    
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('-m','--message', type=str, default=None, help='メッセージ内容')
+parser.add_argument('-u','--user_id', type=str, default=None, help='ユーザーID')
+args = parser.parse_args()
 
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
@@ -32,6 +37,17 @@ def send_random_recipe(user_id: str = None):
         else:
             line_bot_api.broadcast(TextSendMessage(text=msg))
 
-if __name__ == "__main__":
-    user_id = os.getenv("USER_ID")  # 例: workflow_dispatch inputs -> env
+def main():
+    # コマンドライン引数 > 環境変数
+    message = args.message or os.getenv("MESSAGE")
+    user_id = args.user_id or os.getenv("USER_ID")
+    
+    if message == "info":
+        reply = f"User ID: {user_id or 'None'}"
+        line_bot_api.push_message(user_id, TextSendMessage(text=reply))
+        return
+    
     send_random_recipe(user_id)
+
+if __name__ == "__main__":
+    main()
