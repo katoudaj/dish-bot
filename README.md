@@ -1,4 +1,17 @@
-# DishBot
-
-日本語はこちら → [日本語版 README](docs/ja/README.md)  
 English → [English README](docs/en/README.md)
+
+# DishBot
+このプロジェクトは、LINE公式アカウントを使用して、おすすめのメニューをLINEで配信するボットアプリケーションです。
+
+## 公式LINEアカウント
+以下のQRコードからDishBotの公式LINEアカウントを友だち追加できます。
+
+![DishBot公式LINE QRコード](./docs/images/dish_bot_line_qr.png)
+
+## 実行モードについて
+config.pyでEXEC_MODEを設定することで、実行モードを変更できます。
+### production
+本来の動作をします。LINE配信機能やレシピAPI、データベースを利用します。<br>
+※ LINE配信機能やレシピAPI、データベースを利用するには、アクセスキー等の情報が必要です。知り合いの方に限り、利用を希望される場合は、個別にご連絡いただければご対応いたします。
+### debug
+ダミーのレシピ候補を使用し、LINEへの配信は行わず、コンソール出力のみとなります。本番環境での動作とは異なりますのでご注意ください。
